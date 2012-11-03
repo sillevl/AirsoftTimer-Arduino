@@ -94,6 +94,16 @@ void Game::loop(){
 					run = true;
 					startTime = millis();
 					beep->confirm();
+				} else if(teamCode == 1597){
+					teamName = "Charlie";
+					run = true;
+					startTime = millis();
+					beep->confirm();
+				} else if(teamCode == 3579){
+					teamName = "Delta";
+					run = true;
+					startTime = millis();
+					beep->confirm();
 				} else {
 					beep->keyError();
 				}
@@ -116,7 +126,7 @@ void Game::loop(){
 				lcd->setCursor(3,3);
 				lcd->print("Team: ");
 				lcd->print(teamName);
-				lcd->print("   ");
+				lcd->print("    ");
 
 				if(tickCounter != timer){
 					tickCounter = timer;
