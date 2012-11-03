@@ -45,7 +45,7 @@ void Beep::tick(){
 void Beep::alarm(){
 	//tone(horn, 2800);
 	runstart = millis();
-	hornEnd = millis() + 20000;
+	hornEnd = millis() + 60000;
 }
 
 void Beep::off(){
