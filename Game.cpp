@@ -176,7 +176,13 @@ double Game::getBatteryVoltage(){
 void Game::init(){
 	ledbar->set(0x1F);
 
-	beep->key();
+	tone(6,3150);	
+	delay(100);
+	noTone(6);
+	
+	tone(5,4000);
+	delay(100);
+	noTone(5);
 
 	keyboard->begin();
 	lcd->begin(20,4);
@@ -190,7 +196,7 @@ void Game::init(){
 	lcd->setCursor(0,3);
 	lcd->print("    \xFF    \xFF  \xFF\xFF\xFF");
 
-//	delay(2000);
+	delay(5000);
 
 	lcd->clear();
 }
