@@ -5,7 +5,7 @@
 Beep::Beep(int beep, int horn){
 	this->beeper = beep;
 	this->horn = horn;
-	toneHz = 2500;
+	toneHz = 2600;
 	pinMode(horn, OUTPUT);
 	pinMode(beep, OUTPUT);
 }
@@ -22,7 +22,7 @@ void Beep::run(){
 			runstart = millis() + 10;
 			tone(horn, toneHz);
 			toneHz = toneHz + 10;
-			if(toneHz > 3100) toneHz = 2500;
+			if(toneHz > 2900) toneHz = 2700;
 		}
 	}
 }
@@ -52,6 +52,11 @@ void Beep::off(){
 	noTone(beeper);
 	noTone(horn);
 	runstart = 0 - 1;
+}
+
+void Beep::confirm(){
+	tone(beeper,4000);
+    beepEnd = millis() + 500;
 }
 
 

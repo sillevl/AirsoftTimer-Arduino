@@ -44,6 +44,8 @@ class Game{
 
     String teamName;
     int currentTeam;
+
+    int teamCode;
 };
 
 #endif

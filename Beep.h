@@ -8,6 +8,7 @@ class Beep{
 		Beep(int beeper, int horn);
 		void key();
 		void keyError();
+		void confirm();
 		void tick();
 		void alarm();
 		void off();

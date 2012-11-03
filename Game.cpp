@@ -21,6 +21,7 @@ Game::Game(LiquidCrystal* lcd, Keypad_I2C* keyboard, LedBar* ledbar, Buttons* bu
 
 	teamName = "Bravo";
 	currentTeam = 0;
+	teamCode = 0;
 
 }
 
@@ -68,18 +69,34 @@ void Game::loop(){
 		case RUN:
 			if(!run){
 				startTime = millis();
-				lcd->setCursor(3,3);
-				lcd->print("Press any key");
 			} 
-			if(key){
-				startTime = millis();
-				run = true;
-				currentTeam = ~currentTeam;
-				if(currentTeam == 0){
-					teamName = "Alpha";
-				} else {
-					teamName = "Bravo";
+			if(key && key != '#' && key != '*'){
+				int temp = teamCode;
+				teamCode = teamCode *10 + (key-48);
+				if(teamCode > 10000 || teamCode < 0){
+					teamCode = temp;
+					beep->keyError();
 				}
+			}
+			if(key == '#'){
+				if(teamCode == 1397){
+					teamName = "Alpha";
+					run = true;
+					startTime = millis();
+					beep->confirm();
+				} else if(teamCode == 2684){
+					teamName = "Bravo";
+					run = true;
+					startTime = millis();
+					beep->confirm();
+				} else {
+					beep->keyError();
+				}
+				teamCode = 0;
+			}
+
+			if(key == '*'){
+				teamCode = 0;
 			}
 			//timer = (endTime - millis())/1000;
 			if(timer < 0){
@@ -96,6 +113,17 @@ void Game::loop(){
 				lcd->print(teamName);
 				lcd->print("   ");
 			}
+
+			lcd->setCursor(8,2);
+
+			if(teamCode != 0){
+				lcd->print(teamCode);
+				lcd->print("      ");
+			} else {
+				lcd->print("code ?");
+			}
+			
+
 			
 			bigNumber->setCursor(4,0);
 			bigNumber->printTime(timer);
