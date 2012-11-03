@@ -10,10 +10,15 @@ class LedBar{
   public: 
     LedBar(int address);
     void set(int number);
+    void run();
   private:
     int address;
     void send(int data);
     int map(int data);
+
+    long runstart;
+    char runLed;
+    bool direction;
 };
 
 #endif

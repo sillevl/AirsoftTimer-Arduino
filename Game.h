@@ -10,6 +10,8 @@
 
 #include "LedBar.h"
 #include "Buttons.h"
+#include "BigNumber.h"
+#include "Beep.h"
 
 #include "MemoryFree.h"
 
@@ -20,8 +22,7 @@ class Game{
     Game(LiquidCrystal* lcd, Keypad_I2C* keyboard, LedBar* ledbar, Buttons* buttons, int horn, int beep);
     void loop();
   private: 
-  	int horn;
-  	int beep;
+    Beep* beep;
 
     int batteryPin; // battery pin
   	LiquidCrystal* lcd;
@@ -29,16 +30,17 @@ class Game{
     LedBar* ledbar;
     Buttons* buttons;
 
+    BigNumber* bigNumber;
+
   	state gamestate;
 
   	void init();
-  	void printTitle();
-  	void printMode(String title);
     double getBatteryVoltage(void);
 
 
-    int minutes;
+    long minutes;
     unsigned long startTime;
+    bool run;
 };
 
 #endif

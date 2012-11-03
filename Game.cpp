@@ -6,28 +6,18 @@
 Game::Game(LiquidCrystal* lcd, Keypad_I2C* keyboard, LedBar* ledbar, Buttons* buttons, int horn, int beep){
 	this->lcd = lcd;
 	this->keyboard = keyboard;
-	this->horn = horn;
-	this->beep = beep;
 	this->batteryPin = A0;
 	this->ledbar = ledbar;
 	this->buttons = buttons;
+
+	bigNumber = new BigNumber(lcd);
+	this->beep = new Beep(beep, horn);
+
 	init();
 
 	minutes = 0;
 	gamestate = INIT;
-}
-
-void Game::printTitle(){
-	lcd->setCursor(0,0);
-	lcd->print("Start game...");
-}
-
-void Game::printMode(String title){
-/*	lcd->setCursor(0,3);
-	lcd->print(title);
-	lcd->setCursor(6,3);
-	lcd->print("Voltage: ");
-	lcd->print(getBatteryVoltage());*/
+	run = false;
 }
 
 void Game::loop(){
@@ -37,63 +27,77 @@ void Game::loop(){
 
 /*    lcd->setCursor(0,2);
     lcd->print(buttons->read(), BIN);*/
+    beep->run();
 
     char key = keyboard->getKey();
     if(key){
-        tone(5,4000);
-        delay(20);
-        noTone(5);
+    	beep->key();
     }
-	unsigned long endTime = startTime + (1000 * minutes);
-	unsigned long timer;
+	long endTime = startTime + (1000L * minutes * 60L) + 1000L;
+	
+	long timer  = (long)(endTime - millis())/1000L;
 
 	switch(gamestate){
 		case INIT:
 			if(key == '*'){
-				minutes = minutes /10;
+				minutes = 0;
 			} else if (key == '#'){
 				lcd->clear();
+				ledbar->set(0x01);
 				gamestate = RUN;
 				startTime = millis();
-				minutes++;
 				break;
 			} else if(key){
-				int temp = minutes;
+				long temp = minutes;
 				minutes = minutes *10 + (key-48);
 				if(minutes > 60){
 					minutes = temp;
+					beep->keyError();
 				}
+
 			}
-			printTitle();
-			lcd->setCursor(0,1);
-			lcd->print("setMinutes: ");
-			lcd->print(minutes);
-			lcd->print("          ");
-			printMode("INIT");
+			lcd->setCursor(3,0);
+			lcd->print("- Set time - ");
+			bigNumber->setCursor(3,2);
+			bigNumber->printTime(minutes*60);
 			break;
 		case RUN:
-			
-			lcd->setCursor(0,0);
-			timer = (endTime -millis())/1000;
-			if(timer == 0){
+			if(!run){
+				startTime = millis();
+			}
+			if(key){
+				startTime = millis();
+				run = true;
+			}
+			//timer = (endTime - millis())/1000;
+			if(timer < 0){
 				gamestate = END;
 				lcd->clear();
+				beep->alarm();
 				break;
 			}
-			lcd->print(timer);
+			if(run){
+				ledbar->run();
+			}
+			
+			bigNumber->setCursor(4,1);
+			bigNumber->printTime(timer);
 
-			printMode("RUN");
 			break;
 		case END:
-			lcd->setCursor(0,0);
-			lcd->print("END !!!!");
+			if(run && key){
+				run = false;
+				beep->off();
+				break;
+			}
+			lcd->setCursor(3,1);
+			lcd->print("- GAME OVER -");
 			if(key == '#'){
 				gamestate = INIT;
 				lcd->clear();
 				minutes = 0;
 				break;
 			}
-			printMode("END");
 			break;
 	}
 }
@@ -106,10 +110,9 @@ double Game::getBatteryVoltage(){
 
 
 void Game::init(){
-	pinMode(horn, OUTPUT);
-	pinMode(beep, OUTPUT);
+	ledbar->set(0x1F);
 
-	ledbar->set(0xFF);
+	beep->key();
 
 	keyboard->begin();
 	lcd->begin(20,4);
@@ -123,15 +126,7 @@ void Game::init(){
 	lcd->setCursor(0,3);
 	lcd->print("    \xFF    \xFF  \xFF\xFF\xFF");
 
-	tone(horn,3150);	
-	delay(100);
-	noTone(6);
-	
-	tone(beep,4000);
-	delay(100);
-	noTone(5);
-
-	delay(2000);
+//	delay(2000);
 
 	lcd->clear();
 }

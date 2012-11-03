@@ -3,6 +3,7 @@
 
 LedBar::LedBar(int address){
 	this->address = address;
+	runLed = 0x01;
 	Wire.begin();
 }
 
@@ -33,4 +34,22 @@ int LedBar::map(int data){
 	}
 	Serial.print(output, BIN);
 	return ~output;
+}
+
+void LedBar::run(){
+	if(runstart < millis()){
+		runstart = millis() + 100;
+		if(runLed == 0x01){
+			direction = true;
+		} else if(runLed == 0x10){
+			direction = false;
+		}
+		
+		if(direction){
+			runLed = runLed << 1;
+		} else {
+			runLed = runLed >> 1;
+		}
+	set(runLed);
+	}
 }
