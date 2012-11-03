@@ -18,6 +18,10 @@ Game::Game(LiquidCrystal* lcd, Keypad_I2C* keyboard, LedBar* ledbar, Buttons* bu
 	minutes = 0;
 	gamestate = INIT;
 	run = false;
+
+	teamName = "Bravo";
+	currentTeam = 0;
+
 }
 
 void Game::loop(){
@@ -64,10 +68,18 @@ void Game::loop(){
 		case RUN:
 			if(!run){
 				startTime = millis();
-			}
+				lcd->setCursor(3,3);
+				lcd->print("Press any key");
+			} 
 			if(key){
 				startTime = millis();
 				run = true;
+				currentTeam = ~currentTeam;
+				if(currentTeam == 0){
+					teamName = "Alpha";
+				} else {
+					teamName = "Bravo";
+				}
 			}
 			//timer = (endTime - millis())/1000;
 			if(timer < 0){
@@ -78,9 +90,14 @@ void Game::loop(){
 			}
 			if(run){
 				ledbar->run();
+
+				lcd->setCursor(3,3);
+				lcd->print("Team: ");
+				lcd->print(teamName);
+				lcd->print("   ");
 			}
 			
-			bigNumber->setCursor(4,1);
+			bigNumber->setCursor(4,0);
 			bigNumber->printTime(timer);
 
 			break;
@@ -90,13 +107,20 @@ void Game::loop(){
 				beep->off();
 				break;
 			}
-			lcd->setCursor(3,1);
+			lcd->setCursor(3,0);
 			lcd->print("- GAME OVER -");
+			lcd->setCursor(0,2);
+			lcd->print("Winning team: ");
+			//lcd->setCursor(0,3);
+			lcd->print(teamName);
+
 			if(key == '#'){
 				gamestate = INIT;
 				lcd->clear();
 				minutes = 0;
 				break;
+			} else if(key){
+				beep->keyError();
 			}
 			break;
 	}

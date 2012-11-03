@@ -41,6 +41,9 @@ class Game{
     long minutes;
     unsigned long startTime;
     bool run;
+
+    String teamName;
+    int currentTeam;
 };
 
 #endif
