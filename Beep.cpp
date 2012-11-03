@@ -22,7 +22,7 @@ void Beep::run(){
 			runstart = millis() + 10;
 			tone(horn, toneHz);
 			toneHz = toneHz + 10;
-			if(toneHz > 2900) toneHz = 2700;
+			if(toneHz > 3100) toneHz = 2500;
 		}
 	}
 }
@@ -38,8 +38,8 @@ void Beep::keyError(){
 }
 
 void Beep::tick(){
-	tone(beeper,4000);
-	beepEnd = millis() + 2;
+	tone(horn,500);
+	hornEnd = millis() + 2;
 }
 
 void Beep::alarm(){

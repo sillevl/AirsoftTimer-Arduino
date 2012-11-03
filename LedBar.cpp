@@ -32,7 +32,6 @@ int LedBar::map(int data){
 			output += pinMap[i];
 		mask = mask << 1;
 	}
-	Serial.print(output, BIN);
 	return ~output;
 }
 

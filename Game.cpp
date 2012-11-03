@@ -40,7 +40,12 @@ void Game::loop(){
     }
 	long endTime = startTime + (1000L * minutes * 60L) + 1000L;
 	
-	long timer  = (long)(endTime - millis())/1000L;
+	long timer  = (long)(endTime - millis());
+	//Serial.println(timer);
+	timer = timer / 1000;
+	//Serial.println(timer);
+	//Serial.println("*******");
+
 
 	switch(gamestate){
 		case INIT:
@@ -112,6 +117,13 @@ void Game::loop(){
 				lcd->print("Team: ");
 				lcd->print(teamName);
 				lcd->print("   ");
+
+				if(tickCounter != timer){
+					tickCounter = timer;
+					beep->tick();
+					Serial.print("tick ");
+					Serial.println(timer);
+				}
 			}
 
 			lcd->setCursor(8,2);

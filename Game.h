@@ -46,6 +46,7 @@ class Game{
     int currentTeam;
 
     int teamCode;
+    unsigned long tickCounter;
 };
 
 #endif
