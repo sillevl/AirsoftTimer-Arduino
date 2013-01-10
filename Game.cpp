@@ -22,6 +22,8 @@ Game::Game(LiquidCrystal* lcd, Keypad_I2C* keyboard, LedBar* ledbar, Buttons* bu
 	teamName = "Bravo";
 	currentTeam = 0;
 	teamCode = 0;
+	tocking = false;
+	askTocking = false;
 
 }
 
@@ -47,29 +49,49 @@ void Game::loop(){
 	//Serial.println("*******");
 
 
+
 	switch(gamestate){
 		case INIT:
-			if(key == '*'){
-				minutes = 0;
-			} else if (key == '#'){
-				lcd->clear();
-				ledbar->set(0x01);
-				gamestate = RUN;
-				startTime = millis();
-				break;
-			} else if(key){
-				long temp = minutes;
-				minutes = minutes *10 + (key-48);
-				if(minutes > 60){
-					minutes = temp;
-					beep->keyError();
-				}
+			if(!askTocking){
+				if(key == '*'){
+					minutes = 0;
+				} else if (key == '#'){
+					lcd->clear();
+					askTocking = true;
+					break;
+				} else if(key){
+					long temp = minutes;
+					minutes = minutes *10 + (key-48);
+					if(minutes > 60){
+						minutes = temp;
+						beep->keyError();
+					}
 
+				}
+				lcd->setCursor(3,0);
+				lcd->print("- Set time - ");
+				bigNumber->setCursor(3,2);
+				bigNumber->printTime(minutes*60);
+			}else{
+				if(key == '#'){
+					lcd->clear();
+					ledbar->set(0x01);
+					gamestate = RUN;
+					askTocking = false;
+					startTime = millis();
+					break;
+				} else if(key == '*'){
+					tocking = !tocking;
+				}
+				lcd->setCursor(0,0);
+				lcd->print("- use timer beeps -");
+				lcd->setCursor(6,2);
+				if(tocking){
+					lcd->print("YES");
+				} else {
+					lcd->print("NO ");
+				}
 			}
-			lcd->setCursor(3,0);
-			lcd->print("- Set time - ");
-			bigNumber->setCursor(3,2);
-			bigNumber->printTime(minutes*60);
 			break;
 		case RUN:
 			if(!run){
@@ -130,9 +152,11 @@ void Game::loop(){
 
 				if(tickCounter != timer){
 					tickCounter = timer;
-					beep->tick();
-					Serial.print("tick ");
-					Serial.println(timer);
+					if(timer%3 == 0 && tocking){
+						beep->tock();
+					}else{
+						beep->tick();
+					}
 				}
 			}
 
@@ -186,7 +210,7 @@ double Game::getBatteryVoltage(){
 void Game::init(){
 	ledbar->set(0x1F);
 
-	tone(6,3150);	
+	tone(6,2000);	
 	delay(100);
 	noTone(6);
 	

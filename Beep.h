@@ -10,6 +10,7 @@ class Beep{
 		void keyError();
 		void confirm();
 		void tick();
+		void tock();
 		void alarm();
 		void off();
 		void run();

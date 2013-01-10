@@ -41,6 +41,8 @@ class Game{
     long minutes;
     unsigned long startTime;
     bool run;
+    bool tocking;
+    bool askTocking;
 
     String teamName;
     int currentTeam;
