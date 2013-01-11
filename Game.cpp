@@ -48,6 +48,7 @@ void Game::loop(){
 	//Serial.println(timer);
 	//Serial.println("*******");
 
+	Serial.println(buttons->read(), BIN);
 
 
 	switch(gamestate){
@@ -181,6 +182,9 @@ void Game::loop(){
 				beep->off();
 				break;
 			}
+			//if(run){
+				ledbar->alarm();
+			//}
 			lcd->setCursor(3,0);
 			lcd->print("- GAME OVER -");
 			lcd->setCursor(0,2);
@@ -191,6 +195,7 @@ void Game::loop(){
 			if(key == '#'){
 				gamestate = INIT;
 				lcd->clear();
+				ledbar->allOff();
 				minutes = 0;
 				break;
 			} else if(key){
@@ -208,7 +213,7 @@ double Game::getBatteryVoltage(){
 
 
 void Game::init(){
-	ledbar->set(0x1F);
+	ledbar->allOff();
 
 	tone(6,2000);	
 	delay(100);

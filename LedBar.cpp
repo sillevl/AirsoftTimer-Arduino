@@ -17,6 +17,7 @@ void LedBar::set(int data){
 	send(map(data));
 }
 
+
 int LedBar::map(int data){
 	// 4  -> led 4
 	// 8  -> led 2
@@ -49,6 +50,27 @@ void LedBar::run(){
 		} else {
 			runLed = runLed >> 1;
 		}
-	set(runLed);
+		set(runLed);
 	}
+}
+
+void LedBar::alarm(){
+	if(runstart < millis()){
+		runstart = millis() + 100;
+		int timer = ((millis() / 100)%5);
+		if(timer == 0 || timer == 2){
+			runLed = 0xFF;
+		}else{
+			runLed = 0x00;
+		}
+		set(runLed);
+	}
+}
+
+void LedBar::allOff(){
+	set(0x00);
+}
+
+void LedBar::allOn(){
+	set(0xFF);
 }

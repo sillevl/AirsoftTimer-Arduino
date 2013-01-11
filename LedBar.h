@@ -11,6 +11,9 @@ class LedBar{
     LedBar(int address);
     void set(int number);
     void run();
+    void alarm();
+    void allOff();
+    void allOn();
   private:
     int address;
     void send(int data);
